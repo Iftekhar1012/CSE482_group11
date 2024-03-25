@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset = "UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Customer Login</title>
+    <link rel="stylesheet" href="css/All.css">
+
+    <!-- Include Facebook SDK -->
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
+    <!-- Include Google Sign-In Script -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
+</head>
+
+<body>
+    <header>
+        <h1 class="hd">Online E-commerce Service for All</h1>
+        <div class="main">
+            <span class="menu">
+                <a href="Cus2_LoginPage.html">Login as User</a>
+            </span>
+            <span class="menu">
+                <a href="Cus3_RegisterPage.html">New User Register</a>
+            </span>
+            <span class="menu">
+                <a href="AdminLogin.html">Login as Admin</a>
+            </span>
+        </div>
+    </header>
+    <div class="tab green">Customer Login</div>
+    <form action="/userlogin" class="tab brown" method="post">
+        <br /> User Name: <input type="text" name="uname"
+            placeholder="Enter Your User Name"> <br /> <br /> Password: <input
+            type="password" name="pword"> <br /> <br /> <input
+            type="submit" value=" LOGIN "><br />
+    </form>
+    <br />
+
+    <!-- Facebook Login Button -->
+    <div class="fb-login-button" data-width="" data-size="large" data-button-type="login_with" data-layout="rounded" data-auto-logout-link="false" data-use-continue-as="false" scope="public_profile,email" onlogin="checkLoginState();"></div>
+
+    <!-- Google Sign-In Button -->
+    <div class="g-signin2" data-onsuccess="onGoogleSignIn" data-width="300" data-height="40" data-longtitle="true"></div>
+
+    <script>
+        // Function to handle Google sign-in success
+        function onGoogleSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            var id_token = googleUser.getAuthResponse().id_token;
+
+            // Send id_token to your server for verification and login
+            // Example: sendTokenToServer(id_token);
+        }
+
+        // Function to handle Facebook login status
+        function checkLoginState() {
+            FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                    // Logged into your webpage and Facebook.
+                    // Send access token to your server for verification and login
+                    // Example: sendTokenToServer(response.authResponse.accessToken);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
