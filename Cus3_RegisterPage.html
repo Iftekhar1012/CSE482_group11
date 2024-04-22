@@ -1,56 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="UTF-8">
 <title>Customer Registration</title>
 <link rel="stylesheet" href="css/All.css">
 </head>
 <body>
-	<header>
-		<h1 class="hd">Online E-commerce Service for All</h1>
-		<div class="main">
-			<span class="menu"> <a href="Cus2_LoginPage.html">Login as User</a>
-			</span> <span class="menu"> <a href="Cus3_RegisterPage.html">New User
-					Register</a>
-			</span> <span class="menu"> <a href="Admin1_LoginPage.html">Login as
-					Admin</a>
-			</span>
-		</div>
-	</header>
-	<table class="tab brown hd">
-		<tr>
-			<td>New Customer Registration</td>
-		</tr>
-	</table>
+    <header>
+        <h1 class="hd">Online E-commerce Service for All</h1>
+        <div class="main">
+            <span class="menu"> <a href="Cus2_LoginPage.html">Login as User</a>
+            </span> <span class="menu"> <a href="Cus3_RegisterPage.html">New User
+                    Register</a>
+            </span> <span class="menu"> <a href="Admin1_LoginPage.html">Login as
+                    Admin</a>
+            </span>
+        </div>
+    </header>
+    <table class="tab brown hd">
+        <tr>
+            <td>New Customer Registration</td>
+        </tr>
+    </table>
 
-	<table class="tab green">
+    <table class="tab green">
 
-		<tr>
-			<td>
-				<form action="/userreg" method="post">
-					Email : <input type="email" name="mailid"
-						placeholder="Enter your Email" required><br /> <br />
-					Password : <input type="password" name="pword" required><br />
-					<br /> FirstName: <input type="text" name="firstname" required><br />
-					<br /> Last Name: <input type="text" name="lastname" required><br />
-					
-					<br /> Phone No : <input type="number" name="phoneno" required><br />
-					
-					<br /> <input type="submit"
-						value="Please Re-check and Submit Data"
-						style="text-align: center">
-				</form>
-				<div style="margin-top: 20px;">Or register with:</div>
-				<div>
-					<a href="#" style="display: inline-block; margin-top: 10px;"><img src="images/google.png" alt="Google" width="30" height="30"> Register with Google</a>
-					<a href="#" style="display: inline-block; margin-top: 10px;"><img src="images/fb.png" alt="Facebook" width="30" height="30"> Register with Facebook</a>
-					<!-- Add more social login options as needed -->
-				</div>
-			</td>
+        <tr>
+            <td>
+                <?php
+                // Check if form is submitted
+                if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                    // servername => localhost
+                    // username => root
+                    // password => empty
+                    // database name => your_database_name
+                    $conn = mysqli_connect("localhost", "root", "", "482");
 
-		</tr>
-	</table>
+                    // Check connection
+                    if($conn === false){
+                        die("ERROR: Could not connect. " . mysqli_connect_error());
+                    }
 
+                    // Taking all values from the form data(input)
+                    $fullname = $_POST['fullname'];
+                    $username = $_POST['username'];
+                    $birthday = $_POST['birthday'];
+                    $gender = $_POST['gender'];
+                    $email = $_POST['email'];
+                    $phoneno = $_POST['phoneno'];
+                    $password = $_POST['password'];
+                    $confirm_password = $_POST['confirm_password'];
 
-</body>
-</html>
+                    // Check if passwords match
+                    if ($password !== $confirm_password) {
+                        echo "ERROR: Passwords do not match.";
+                    } else {
+                        // Performing insert query execution
+                        $sql = "user(name, username, dob, gender, email, phone, password) VALUES ('$fullname', '$username', '$birthday', '$gender', '$email', '$phoneno', '$password')";
+
+                        if(mysqli_query($conn, $sql)){
+                            echo "<h3>Registration successful.</h3>"; 
+                        } else{
+                            echo "ERROR: Oops! Something went wrong. " . mysqli_error($conn);
+                        }
+                    }
+
+                    // Close connection
+                    mysqli_close($conn);
+                }
+                ?>
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                    Full Name: <input type="text" name="fullname" required><br /><br />
+                    Username: <input type="text" name="username" required><br /><br />
+                    Birthday: <input type="date" name="birthday" required><br /><br />
+                    Gender:
+                    <input type="radio" name="gender" value="Male" id="male">
+                    <label for="male">Male</label>
+                    <input type="radio" name="gender" value="Female" id="female">
+                    <label for="female">Female</label><br /><br />
+                    Email : <input type="email" name="email" placeholder="Enter your Email" required><br /><br />
+                    Phone No : <input type="tel" name="phoneno" required><br /><br />
+                    Password : <input type="password" name="password" required><br /><br />
+                    Confirm Password : <input type="password" name="confirm_password" required><br /><br />
+                    <input type="submit" value="Please Re-check and Submit Data">
+                </form>
+                <div style="margin-top: 20px;">Or register with:</div>
+                <div>
+                    <a href="#" style="display: inline-block; margin-top: 10px;"><img src="images/google.png" alt="Google" width="30" height="30"> Register with Google</a>
+                    <a href="#" style="display: inline-block; margin-top: 10px;"><img src="images/fb.png" alt="Facebook" width="30" height="30"> Register with Facebook</a>
+                    <!-- Add more social login options as needed -->
+                </div>
+            </td>
+
+        </tr>
+    </table>
