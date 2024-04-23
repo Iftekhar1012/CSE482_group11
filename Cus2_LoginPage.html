@@ -1,6 +1,6 @@
 <?php
     session_start();
-    include_once('connect.php');
+    include_once('connection.php');
 
     $error = false;
     $errorMsg = '';
@@ -24,7 +24,7 @@
 
         if(!$error){
             $password = md5($password);
-            $sql = "SELECT * FROM users WHERE username='$username'";
+            $sql = "SELECT * FROM user WHERE username='$username'";
             $result = mysqli_query($conn, $sql);
             $count = mysqli_num_rows($result);
             $row = mysqli_fetch_assoc($result);
