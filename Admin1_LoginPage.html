@@ -1,3 +1,43 @@
+<?php
+    session_start();
+    include_once('connection.php');
+
+    $error = false;
+    $errorMsg = '';
+
+    if(isset($_POST['login'])){
+        $username = trim($_POST['username']);
+        $username = htmlspecialchars(strip_tags($username));
+        $username = strip_tags($username);
+
+        $password = trim($_POST['password']);
+        $password = htmlspecialchars(strip_tags($password));
+        $password = strip_tags($password);
+
+        if(empty($password)){
+            $error = true;
+            $errorPassword = 'Please enter password';
+        } elseif(strlen($password) < 8){
+            $error = true;
+            $errorPassword = 'Enter a strong password';
+        }
+
+        if(!$error){
+            $password = md5($password);
+            $sql = "SELECT * FROM admin WHERE username='$username'";
+            $result = mysqli_query($conn, $sql);
+            $count = mysqli_num_rows($result);
+            $row = mysqli_fetch_assoc($result);
+            if($count == 1 && $row['password'] == $password){
+                $_SESSION['username'] = $row['username'];
+                $_SESSION["authenticate"] = "success";
+                echo "<script>alert('Login successful!');</script>";
+            } else {
+                $errorMsg = 'Invalid Username or Password';
+            }
+        }
+    }
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +47,7 @@
 </head>
 <body>
 	<header>
-		<h1 class="hd">Online E-commerce Service for All</h1>
+		<h1 class="hd">Train Transport System</h1>
 		<div class="main">
 			<span class="menu"> <a href="Cus2_LoginPage.html">Login as User</a>
 			</span> <span class="menu"> <a href="Cus3_RegisterPage.html">New User
@@ -19,13 +59,13 @@
 	</header>
 	
 	<div class="tab green">Admin Login</div>
-	<form action="/adminlogin" class="tab brown" method="post">
+	<form action="<?php echo isset($_COOKIE["username"]) ? $_COOKIE["username"] : ""; ?>" class="tab brown" method="post">
 		<br />
-        UserName: <input type="text" name="uname"
-			placeholder="Enter Your Email">
+        UserName: <input type="text" name="username"
+			placeholder="Enter Your username">
             <br />
 		<br />
-         Password: <input type="password" name="pword"><br />
+         Password: <input type="password" name="password"><br />
 		<br />
          <input type="submit" value=" LOGIN "><br />
 
