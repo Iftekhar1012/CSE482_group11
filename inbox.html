@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inbox</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -148,6 +149,8 @@
             text-decoration: underline;
         }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 </head>
 
 <body>
@@ -210,3 +213,20 @@
 </body>
 
 </html>
+
+<script>
+    $(document).ready(function() {
+        function fetchInboxMessages() {
+            $.ajax({
+                url: "fetchMessages.php", // Use the same PHP script created earlier
+                success: function(data) {
+                    $(".inbox-container").html(data); // Update the inbox container with fetched messages
+                }
+            });
+        }
+    
+        // Fetch messages when the page loads
+        fetchInboxMessages();
+    });
+    </script>
+    
