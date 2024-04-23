@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Chat Interface</title>
     <style>
@@ -33,7 +33,6 @@
             display: inline;
             margin-right: 20px;
             position: relative;
-
         }
 
         .navbar a {
@@ -47,7 +46,6 @@
         .navbar a:hover {
             background-color: #0056b3;
         }
-
 
         .dropdown-content {
             display: none;
@@ -121,6 +119,8 @@
             max-width: 70%;
             word-wrap: break-word;
             align-self: flex-end;
+            cursor: pointer;
+            /* Makes it clickable */
         }
 
         .message.received {
@@ -156,6 +156,63 @@
         .input-container button:hover {
             background-color: #0056b3;
         }
+
+        button {
+            margin-right: 5px;
+        }
+
+        /* CSS within the <style> tag */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .search-bar {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .search-bar input[type="text"] {
+                width: 90%;
+            }
+
+            .container,
+            .inbox-container {
+                width: 80%;
+                margin: 10px auto;
+            }
+        }
+
+        /* Additions to your existing styles for animations and interactions */
+        .message {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-in-out;
+        }
+
+        .message.sending {
+            transform: translateY(-10px);
+            opacity: 0.5;
+        }
+
+        .message-options {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+        }
+
+        .edit-message,
+        .delete-message {
+            cursor: pointer;
+            background: #f1f1f1;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .edit-message:hover,
+        .delete-message:hover {
+            background: #ddd;
+        }
     </style>
 </head>
 
@@ -175,63 +232,71 @@
             <li><a href="#">About</a></li>
         </ul>
         <div class="search-bar">
-            <input type="text" placeholder="Search...">
+            <input type="text" placeholder="Search..." />
             <button>Search</button>
         </div>
     </div>
     <div class="container" id="chat-container">
-        <div class="message-container">
+        <div class="message-container"></div>
+        <div class="message-container-default">
             <!-- Sample Messages -->
             <div class="message received">Hello there!</div>
-            <div class="message sent">Hi! How can I help you?</div>
-            <div class="message received">I have a question about your services.</div>
-            <div class="message sent">Sure, feel free to ask!</div>
+            <div class="message received">Hi! How can I help you?</div>
+            <div class="message received">
+                I have a question about your services.
+            </div>
+            <div class="message received">Sure, feel free to ask!</div>
         </div>
         <div class="input-container">
-            <input type="text" id="message-input" placeholder="Type your message...">
+            <input type="text" id="username-input" placeholder="Your username..." />
+            <input type="text" id="message-input" placeholder="Type your message..." />
+            <input type="file" id="file-input" style="display: none;">
+            <button onclick="$('#file-input').click();">Attach File</button>
             <button id="send-button">Send</button>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $(".message").click(function () {
+                var messageText = $(this).text();
+                $("#message-input").val(messageText); // Places the message text in the message input
+                $("#username-input").val("Guest"); // Places the message text in the message input
+            });
+            $("#send-button").click(function (e) {
+                e.preventDefault();
+                var username = $("#username-input").val().trim();
+                var message = $("#message-input").val().trim();
+                if (message !== "" && username !== "") {
+                    $.ajax({
+                        type: "POST",
+                        url: "sendMessage.php",
+                        data: { username: username, message: message },
+                        success: function (response) {
+                            $("#chat-container .message-container").append(
+                                '<div class="message sent"><strong>' +
+                                username +
+                                ":</strong> " +
+                                message +
+                                "</div>"
+                            );
+                            $("#message-input").val(""); // Clear input field after send
+                            $("#username-input").val(""); // Clear input field after send
+                        },
+                    });
+                }
+            });
 
-
+            function fetchMessages() {
+                $.ajax({
+                    url: "fetchMessages.php",
+                    success: function (data) {
+                        $(".message-container").html(data); // Update the message container with fetched messages
+                    },
+                });
+            }
+            setInterval(fetchMessages, 1000);
+        });
+    </script>
 </body>
 
 </html>
-
-<script>
-    $(document).ready(function(){
-        $("#send-button").click(function(e){
-            e.preventDefault(); // Prevent default form submission
-            var message = $("#message-input").val().trim();
-            if(message !== '') {
-                $.ajax({
-                    type: "POST",
-                    url: "sendMessage.php",
-                    data: { message: message },
-                    success: function(response){
-                        $("#chat-container .message-container").append('<div class="message sent">' + message + '</div>');
-                        $("#message-input").val(''); // Clear input field after send
-                    }
-                });
-            }
-        });
-    });
-
-    function fetchMessages() {
-    $.ajax({
-        url: "fetchMessages.php",
-        success: function(data) {
-            $(".message-container").html(data); // Update the message container with fetched messages
-        }
-    });
-    }
-
-    // Fetch messages every 5 seconds
-    setInterval(fetchMessages, 5000);
-
-    // Fetch messages when the page loads
-    $(document).ready(function(){
-        fetchMessages();
-    });
-
-</script>
